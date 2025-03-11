@@ -19,7 +19,7 @@ public class UserDetailConfig {
             .build();
         return new InMemoryUserDetailsManager(user);
     }
-
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(); // Use BCrypt for password encoding

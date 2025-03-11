@@ -6,7 +6,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,7 +40,11 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Convert roles (e.g., "ROLE_USER") to GrantedAuthority objects
-        return Collections.singletonList(new SimpleGrantedAuthority(roles));
+        List<String> roleList = new ArrayList<>(Arrays.asList(roles.split(",")));
+        return roleList.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+        //return Collections.singletonList(new SimpleGrantedAuthority(roles));
     }
 
     @Override
