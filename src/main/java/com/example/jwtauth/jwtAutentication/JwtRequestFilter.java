@@ -17,6 +17,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             roles = jwtUtil.extractClaim(token, claims -> claims.get("roles", List.class));
             System.out.println("Extracted Roles: " + roles);
             System.out.println("Extracted Username: " + username);
+            System.out.println("Extracted created time: " + jwtUtil.extractClaim(token, claims -> claims.getIssuedAt()));
+            System.out.println("Extracted expiration time: " + jwtUtil.extractClaim(token, claims -> claims.getExpiration()));
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -57,12 +60,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     List<GrantedAuthority> authorities = roles.stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
-
+                    System.out.println("UsernamePasswordAuthenticationToken prosses ");
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, authorities);
                             usernamePasswordAuthenticationToken
                             .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    System.out.println("UsernamePasswordAuthenticationToken done");
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    System.out.println("SecurityContextHolder done " );
                 }
             }
         }
